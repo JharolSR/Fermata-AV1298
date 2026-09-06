@@ -1,4 +1,4 @@
-name: Build Fermata AV1298 APK
+name: Build YouTube AV1298 APK
 
 on:
   push:
@@ -10,7 +10,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: fermata-av1298-${{ github.ref }}
+  group: youtube-av1298-${{ github.ref }}
   cancel-in-progress: true
 
 env:
@@ -18,13 +18,13 @@ env:
   ANDROID_COMPILE_SDK: '36'
   ANDROID_BUILD_TOOLS: '36.0.0'
   ANDROID_NDK: '29.0.14206865'
-  APP_NAME: 'Fermata AV1298'
-  APP_ID: 'com.jharolsr.fermata.av1298'
-  APP_ID_SFX: '.car'
+  APP_NAME: 'YouTube AV1298'
+  APP_ID: 'com.jharolsr.youtube.av1298'
+  APP_ID_SFX: '.mirror'
 
 jobs:
   build:
-    name: Build ARM64 APK for S23 FE
+    name: Build ARM64 mirror APK for S23 FE
     runs-on: ubuntu-latest
 
     steps:
@@ -87,13 +87,13 @@ jobs:
             echo "APK not found"
             exit 1
           fi
-          cp "$APK" "dist/Fermata-AV1298-arm64.apk"
+          cp "$APK" "dist/YouTube-AV1298-arm64.apk"
           ls -lh dist/
 
       - name: Upload installable APK
         uses: actions/upload-artifact@v4
         with:
-          name: Fermata-AV1298-arm64
-          path: dist/Fermata-AV1298-arm64.apk
+          name: YouTube-AV1298-arm64
+          path: dist/YouTube-AV1298-arm64.apk
           if-no-files-found: error
           retention-days: 30
