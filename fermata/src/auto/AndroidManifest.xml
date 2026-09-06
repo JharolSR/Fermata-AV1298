@@ -27,33 +27,33 @@
         </intent>
     </queries>
 
+    <application android:icon="@drawable/mirror">
+        <meta-data
+            android:name="com.google.android.gms.car.application"
+            tools:node="remove" />
 
-    <application android:icon="@drawable/launcher">
-        <meta-data
-            android:name="xposedmodule"
-            android:value="true" />
-        <meta-data
-            android:name="xposeddescription"
-            android:value="Android Auto hooks" />
-        <meta-data
-            android:name="xposedminversion"
-            android:value="54" />
-        <meta-data
-            android:name="xposedscope"
-            android:resource="@array/xposedscope" />
+        <meta-data android:name="xposedmodule" android:value="true" />
+        <meta-data android:name="xposeddescription" android:value="Android Auto hooks" />
+        <meta-data android:name="xposedminversion" android:value="54" />
+        <meta-data android:name="xposedscope" android:resource="@array/xposedscope" />
         <meta-data
             android:name="androidx.car.app.minCarApiLevel"
             android:value="5"
             tools:ignore="MetadataTagInsideApplicationTag" />
 
         <service
+            android:name="me.aap.fermata.media.service.FermataMediaService"
+            android:enabled="false"
+            tools:replace="android:enabled" />
+
+        <service
             android:name="me.aap.fermata.auto.CarService"
+            android:enabled="false"
             android:exported="true"
             android:label="@string/app_name"
             tools:ignore="ExportedService">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="com.google.android.gms.car.category.CATEGORY_PROJECTION" />
                 <category android:name="com.google.android.gms.car.category.CATEGORY_PROJECTION_OEM" />
             </intent-filter>
@@ -61,13 +61,13 @@
 
         <service
             android:name="me.aap.fermata.auto.MirrorService"
+            android:enabled="true"
             android:exported="true"
             android:icon="@drawable/mirror"
             android:label="@string/mirror_service_name"
             tools:ignore="ExportedService">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="com.google.android.gms.car.category.CATEGORY_PROJECTION" />
                 <category android:name="com.google.android.gms.car.category.CATEGORY_PROJECTION_OEM" />
             </intent-filter>
@@ -75,6 +75,7 @@
 
         <service
             android:name="me.aap.fermata.auto.MirrorServiceFS"
+            android:enabled="false"
             android:exported="true"
             android:icon="@drawable/mirror_fs"
             android:label="@string/mirror_fs_service_name"
@@ -110,9 +111,7 @@
             <intent-filter>
                 <action android:name="android.accessibilityservice.AccessibilityService" />
             </intent-filter>
-            <meta-data
-                android:name="android.accessibilityservice"
-                android:resource="@xml/accessibility" />
+            <meta-data android:name="android.accessibilityservice" android:resource="@xml/accessibility" />
         </service>
 
         <service
@@ -130,9 +129,9 @@
                 android:resource="@xml/filepaths" />
         </provider>
 
-        <!-- Auto start MediaService when connected to bluetooth (AA?) -->
         <receiver
             android:name="me.aap.fermata.auto.MediaServiceStarter"
+            android:enabled="false"
             android:exported="false">
             <intent-filter>
                 <action android:name="android.bluetooth.device.action.ACL_CONNECTED" />
