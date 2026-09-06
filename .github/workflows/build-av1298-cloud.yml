@@ -1,0 +1,99 @@
+name: Build Fermata AV1298 APK
+
+on:
+  push:
+    branches:
+      - av1298-test
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: fermata-av1298-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  JAVA_VERSION: '17'
+  ANDROID_COMPILE_SDK: '36'
+  ANDROID_BUILD_TOOLS: '36.0.0'
+  ANDROID_NDK: '29.0.14206865'
+  APP_NAME: 'Fermata AV1298'
+  APP_ID: 'com.jharolsr.fermata.av1298'
+  APP_ID_SFX: '.car'
+
+jobs:
+  build:
+    name: Build ARM64 APK for S23 FE
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository with submodules
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          fetch-depth: 0
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: ${{ env.JAVA_VERSION }}
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install Android SDK components
+        shell: bash
+        run: |
+          yes | sdkmanager --licenses >/dev/null || true
+          sdkmanager \
+            "platform-tools" \
+            "platforms;android-${ANDROID_COMPILE_SDK}" \
+            "build-tools;${ANDROID_BUILD_TOOLS}" \
+            "ndk;${ANDROID_NDK}"
+
+      - name: Set up Gradle cache
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Prepare build
+        shell: bash
+        run: |
+          chmod +x gradlew
+          echo "sdk.dir=${ANDROID_HOME}" > local.properties
+          echo "ndk.dir=${ANDROID_HOME}/ndk/${ANDROID_NDK}" >> local.properties
+          echo "Building ${APP_NAME}"
+          echo "Application ID base: ${APP_ID}"
+
+      - name: Build signed Auto release APK
+        env:
+          NO_GS: 'true'
+        shell: bash
+        run: |
+          ./gradlew fermata:packageAutoReleaseUniversalApk \
+            -PABI=arm64-v8a \
+            -PAPP_NAME="${APP_NAME}" \
+            -PAPP_ID="${APP_ID}" \
+            -PAPP_ID_SFX="${APP_ID_SFX}" \
+            --stacktrace
+
+      - name: Collect APK
+        shell: bash
+        run: |
+          mkdir -p dist
+          find fermata/build -type f -name '*.apk' -print
+          APK="$(find fermata/build/outputs/apk_from_bundle/autoRelease -type f -name '*.apk' | head -n 1)"
+          if [ -z "$APK" ]; then
+            echo "APK not found"
+            exit 1
+          fi
+          cp "$APK" "dist/Fermata-AV1298-arm64.apk"
+          ls -lh dist/
+
+      - name: Upload installable APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: Fermata-AV1298-arm64
+          path: dist/Fermata-AV1298-arm64.apk
+          if-no-files-found: error
+          retention-days: 30
