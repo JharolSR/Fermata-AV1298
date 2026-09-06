@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name_auto_release" translatable="false">YouTube AV1298</string>
+    <string name="app_name_auto_debug" translatable="false">Debug YouTube AV1298</string>
+    <string name="mirror_service_name_release" translatable="false">YouTube AV1298</string>
+    <string name="mirror_service_name_debug" translatable="false">Debug YouTube AV1298</string>
+    <string name="mirror_fs_service_name_release" translatable="false">YouTube AV1298 FS</string>
+    <string name="mirror_fs_service_name_debug" translatable="false">Debug YouTube AV1298 FS</string>
+</resources>
