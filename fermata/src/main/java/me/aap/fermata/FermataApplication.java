@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.IBinder;
 
 import androidx.annotation.NonNull;
@@ -46,6 +47,23 @@ public class FermataApplication extends NetSplitCompatApp {
 		super.onCreate();
 		vfsManager = new FermataVfsManager();
 		bitmapCache = new BitmapCache();
+		logAv1298Diagnostics();
+	}
+
+	private void logAv1298Diagnostics() {
+		try {
+			var dm = getResources().getDisplayMetrics();
+			var cfg = getResources().getConfiguration();
+			android.util.Log.i("FermataAV1298", "=== Fermata AV-1298 diagnostic build ===");
+			android.util.Log.i("FermataAV1298", "package=" + getPackageName());
+			android.util.Log.i("FermataAV1298", "autoFlavor=" + BuildConfig.AUTO + ", debug=" + BuildConfig.DEBUG);
+			android.util.Log.i("FermataAV1298", "android=" + Build.VERSION.RELEASE + " sdk=" + Build.VERSION.SDK_INT);
+			android.util.Log.i("FermataAV1298", "device=" + Build.MANUFACTURER + " " + Build.MODEL);
+			android.util.Log.i("FermataAV1298", "displayPx=" + dm.widthPixels + "x" + dm.heightPixels + " density=" + dm.densityDpi);
+			android.util.Log.i("FermataAV1298", "screenDp=" + cfg.screenWidthDp + "x" + cfg.screenHeightDp + " orientation=" + cfg.orientation);
+		} catch (Throwable err) {
+			android.util.Log.e("FermataAV1298", "Failed to collect startup diagnostics", err);
+		}
 	}
 
 	@Override
